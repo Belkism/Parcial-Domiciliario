@@ -1,0 +1,168 @@
+/*Se le colocó los nombres a los pines con los que 
+se va a  trabajar en el 7 segmentos.
+*/
+//Pines del display del 7 segmento//
+//efine A 13
+//efine B 12
+//efine C 11
+//efine D 10
+//efine E 9
+//efine F 8
+//efine G 7
+
+// Pines A4 Y A5 estan definidos para las decenas y unidades//
+#define DECENA A4
+#define UNIDAD A5
+// se definieron los botones,para bajar,subir,reset//
+#define SUBE 5
+#define BAJA 4
+#define RESET 3
+#define TIEMPO 10
+#define Contador
+
+int subep=0, bajap=0, resetp=0,sube=0,baja=0,reset=0; // Variables para que funcione la función teclado//
+
+void setup() //Iniciamos los pines con su configuración//
+  
+{
+  pinMode(5,INPUT_PULLUP);
+  pinMode(4,INPUT_PULLUP);
+  pinMode(3,INPUT_PULLUP);
+  pinMode(7,OUTPUT);
+  pinMode(8,OUTPUT);       
+  pinMode(9,OUTPUT); 
+  pinMode(10,OUTPUT); 
+  pinMode(11,OUTPUT); 
+  pinMode(12,OUTPUT); 
+  pinMode(13,OUTPUT);
+  pinMode(A4,OUTPUT);
+  pinMode(A5,OUTPUT);
+  Serial.begin(9600); /* Se inicia monitoreo serial*/
+}
+    
+  void numero(int a)// Esta función nos permite mostrar el número en los display//
+  {
+    if (a!=1 && a!=4 && a!=7 && a!=9){// Segmento D de Display//
+    	digitalWrite(10,HIGH);}
+    
+    if (a!=2){// Segmento C Display//
+ 		digitalWrite(11,HIGH);}
+  
+    if (a!=5 && a!=6){ // Segmento B del display//
+ 		digitalWrite(12,HIGH);}
+ 
+    if(a!=1 && a!=4){// Segmento A display//
+ 		digitalWrite(13,HIGH);}
+   
+    if (a!=1 && a!=2 && a!=3 && a!=7){// Segmento F Display//
+ 		digitalWrite(8,HIGH);}
+    
+    if (a==0 || a==2 || a==6 || a==8){ // Segmento E Display//
+ 		digitalWrite(9,HIGH);}
+    
+    if (a!=0 && a!=1 && a!=7){//Segmento G Display//
+ 		digitalWrite(7,HIGH);}
+  }
+
+void clear()// Es una función para limpiar el display, los pines estan en LOW//
+	{
+  	digitalWrite(13,LOW);
+  	digitalWrite(12,LOW);
+  	digitalWrite(11,LOW);
+  	digitalWrite(10,LOW);
+  	digitalWrite(9,LOW);
+  	digitalWrite(8,LOW);
+  	digitalWrite(7,LOW);
+	}
+
+int teclado(void)//Esta función corresponde  a los pines de entrada de los botones, que permite obtener una muestra por cada loop//
+	{ 
+  	sube = digitalRead(5);
+  	baja = digitalRead(4);
+  	reset = digitalRead(3);	
+  
+  	if (sube == 1)
+      subep = 1;
+  	if (baja==1)
+      bajap = 1;
+  	if (reset==1)
+      resetp = 1;
+  
+  	if(sube == 0 && sube != subep)
+    	{
+    	subep = sube;
+      	return 5;
+    	}
+  	
+  	if(baja == 0 && baja != bajap)
+    	{
+    	bajap = baja;
+        return 4;
+    	}
+  
+  	if(reset == 0 && reset != resetp)
+    	{
+    	resetp = reset;
+      	return 3;
+    	}
+  	return 0;
+}
+
+void loop()
+{
+  int contador=0;
+  int a=0,d=0,z=0,u=0,sube=0,baja=0,p=0;
+  
+  while(1)// Nucleo del programa//
+  {
+  p=teclado();
+  if (p==5)
+  {
+    if (contador < 99) 
+    {
+     delay(10);
+     contador++;
+    }
+  }
+  
+
+  if (p==4)
+  {
+    if(contador > 0)
+    	{
+      	delay(10);
+      	contador --;
+    	}
+  }
+
+  if (p==3) 
+  {
+    delay(10);
+  	contador=0;
+  }
+  /*Serial.print("contador");
+  Serial.println(contador);*/
+  
+  d=((int)contador/10);
+  z=d*10;
+  u=contador-z;
+  
+  clear();  
+  digitalWrite(A5,HIGH);
+  digitalWrite(A4,LOW);
+  /*Serial.print("decenas");
+  Serial.println(d);*/
+  numero(d);
+  delay (10); //Se le agregan 10 milisegundos//
+  
+  clear();
+  digitalWrite(A5,LOW);
+  digitalWrite(A4,HIGH);
+  /*Serial.print("unidades");
+  Serial.println(u);*/
+  numero(u);
+  delay(10);
+  }
+}
+//Serial.print.ln(a);
+ 
